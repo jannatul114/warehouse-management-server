@@ -10,14 +10,6 @@ app.use(cors())
 app.use(express.json());
 
 
-//OizTQOmb568WN0uV
-//allFruits
-
-//fruits
-//B7quVO9XMUTOCc1H
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.xjjrn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -25,7 +17,7 @@ async function run() {
         await client.connect();
         const fruitsCollection = client.db("inventoryItems").collection("item");
 
-
+        //getting all item
         app.get('/allfruits', async (req, res) => {
             const quary = {};
             const cursor = fruitsCollection.find(quary);
@@ -33,6 +25,7 @@ async function run() {
             res.send(result);
         })
 
+        //getting specific item
         app.get('/allfruits/:id', async (req, res) => {
             const id = req.params.id;
             const quary = { _id: ObjectId(id) }
@@ -40,6 +33,8 @@ async function run() {
             res.send(cursor);
         })
 
+
+        //deleting specific item
         app.delete('/allfruits/:id', async (req, res) => {
             const id = req.params.id;
             const quary = { _id: ObjectId(id) }
@@ -47,7 +42,7 @@ async function run() {
             res.send(result);
         })
 
-
+        //posting items
         app.post('/allfruits', async (req, res) => {
             const newItem = req.body;
             console.log(req.body);
@@ -56,13 +51,10 @@ async function run() {
         })
 
     } finally {
-        //   await client.close();
+
     }
 }
 run().catch(console.dir);
-
-
-
 
 
 app.get('/', (req, res) => {
