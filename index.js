@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const app = express()
 const port = process.env.PORT || 5000;
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // moddlewares
 require('dotenv').config()
@@ -17,7 +18,6 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.xjjrn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run() {
@@ -33,6 +33,27 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/allfruits/:id', async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: ObjectId(id) }
+            const cursor = await fruitsCollection.findOne(quary);
+            res.send(cursor);
+        })
+
+        app.delete('/allfruits/:id', async (req, res) => {
+            const id = req.params.id;
+            const quary = { _id: ObjectId(id) }
+            const result = await fruitsCollection.deleteOne(quary);
+            res.send(result);
+        })
+
+
+        app.post('/allfruits', async (req, res) => {
+            const newItem = req.body;
+            console.log(req.body);
+            const result = await fruitsCollection.insertOne(newItem);
+            res.send(result);
+        })
 
     } finally {
         //   await client.close();
