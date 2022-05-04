@@ -50,6 +50,19 @@ async function run() {
             res.send(result);
         })
 
+        //updating updating
+        app.put('/allfruits/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedItems = req.body;
+            const filtering = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: updatedItems
+            }
+            const result = await fruitsCollection.updateOne(filtering, updatedDoc, options);
+            res.send(result);
+        })
+
     } finally {
 
     }
