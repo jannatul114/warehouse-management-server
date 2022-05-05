@@ -33,7 +33,6 @@ async function run() {
             res.send(cursor);
         })
 
-
         //deleting specific item
         app.delete('/allfruits/:id', async (req, res) => {
             const id = req.params.id;
@@ -45,7 +44,6 @@ async function run() {
         //posting items
         app.post('/allfruits', async (req, res) => {
             const newItem = req.body;
-            console.log(req.body);
             const result = await fruitsCollection.insertOne(newItem);
             res.send(result);
         })
