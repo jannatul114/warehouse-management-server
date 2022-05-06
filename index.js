@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors');
 const app = express()
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
@@ -17,8 +18,21 @@ async function run() {
         await client.connect();
         const fruitsCollection = client.db("inventoryItems").collection("item");
 
+
+        //jwt token implementing
+        // app.post('/login', async (req, res) => {
+        //     const user = req.body;
+        //     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+        //         expiresIn: '1d'
+        //     })
+        //     res.send({ accessToken })
+        // })
+
+
         //getting all item
         app.get('/allfruits', async (req, res) => {
+            authHeader = req.headers.authorization;
+            console.log(authHeader);
             const quary = {};
             const cursor = fruitsCollection.find(quary);
             const result = await cursor.toArray();
@@ -48,6 +62,22 @@ async function run() {
             res.send(result);
         })
 
+
+        //getting items
+        app.get('/usersfruits', async (req, res) => {
+            const email = req.query.email;
+            const quary = { email: email };
+            const cursor = fruitsCollection.find(quary);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+        //posting user items
+        app.post('/usersfruits', async (req, res) => {
+            const newItem = req.body;
+            const result = await fruitsCollection.insertOne(newItem);
+            res.send(result);
+        })
+
         //updating 
         app.put('/allfruits/:id', async (req, res) => {
             const id = req.params.id;
@@ -58,12 +88,11 @@ async function run() {
 
                 $set: {
                     name: updatedItems.name,
-                    email: updatedItems.email,
                     price: updatedItems.price,
                     quantity: updatedItems.quantity,
                     img: updatedItems.img,
                     description: updatedItems.description,
-                    supplire: updatedItems.supplire,
+                    supplier: updatedItems.supplier,
                 }
             }
             const result = await fruitsCollection.updateOne(filtering, updatedDoc, options);
