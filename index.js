@@ -111,10 +111,12 @@ async function run() {
         app.put('/allfruits/:id', async (req, res) => {
             const id = req.params.id;
             const updatedItems = req.body;
+
+            console.log(updatedItems.sold);
+
             const filtering = { _id: ObjectId(id) }
             const options = { upsert: true };
             const updatedDoc = {
-
                 $set: {
                     name: updatedItems.name,
                     price: updatedItems.price,
@@ -122,6 +124,7 @@ async function run() {
                     img: updatedItems.img,
                     description: updatedItems.description,
                     supplier: updatedItems.supplier,
+                    sold: updatedItems.sold,
                 }
             }
             const result = await fruitsCollection.updateOne(filtering, updatedDoc, options);
